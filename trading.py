@@ -56,7 +56,19 @@ def test_run():
     symbols = ['GOOG', 'IBM', 'GLD']  # SPY will be added in get_data()
 
     df = get_data(symbols, dates)
+    #   slice by row range(dates)
+    # print df.ix['2010-01-01':'2010-01-31'] # the month of january
+
+    #   slice by column(symbols)
+    # print df['GOOG'] # a single label prints a single column
+    # print df[['IBM','GLD']] # a list of labelels selects multiple columns
+
+    #   slice by row and column
+    # print df.ix['2010-03-10':'2010-03-15',['SPY','IBM']]
+
     print df
+
 
 if __name__ == '__main__':
     test_run()
+    print 'exit'
