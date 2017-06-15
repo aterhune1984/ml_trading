@@ -1,8 +1,10 @@
+
 import os
 import pandas as pd
 import datetime
 import urllib
 import StringIO
+import matplotlib.pyplot as plt
 
 def google_history_pull(symbol, start_date, end_date=datetime.date.today().isoformat()):
     """ pull 'date,open,high,low,close,volume' from google 
@@ -15,6 +17,10 @@ def google_history_pull(symbol, start_date, end_date=datetime.date.today().isofo
         start.strftime('%b %d, %Y'), end.strftime('%b %d, %Y'))
     csv = urllib.urlopen(url_string).readlines()
     return csv
+
+def plot_selected(df, columns, start_index, end_index):
+    '''plot desired columns over index values in the given range'''
+    plot_data(df.ix[start_index:end_index,columns],title="Selected data")
 
 
 def symbol_to_path(symbol, base_dir="data"):
@@ -47,6 +53,29 @@ def get_data(symbols, dates):
             df = df.dropna(subset=['SPY'])
     return df
 
+def plot_data(df,title='Stock prices'):
+    '''plot stock prices'''
+    ax = df.plot(title=title)
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Price')
+    plt.show()
+
+
+def get_rolling_mean(values, window):
+    return pd.rolling_mean(values, window=window)
+
+def get_rolling_std(values,window):
+    return pd.rolling_std(values, window=window)
+
+def get_bollinger_bands(rm, rstd):
+    ''' return upper and lower bollinger bands'''
+    upper_band = rm + rstd * 2
+    lower_band = rm - rstd * 2
+    return upper_band, lower_band
+
+def normalize_data(df):
+    """normalize stock prices uning the first row of the dataframe"""
+    return df/ df.ix[0,:]
 
 def test_run():
     # define a date range
@@ -66,7 +95,45 @@ def test_run():
     #   slice by row and column
     # print df.ix['2010-03-10':'2010-03-15',['SPY','IBM']]
 
-    print df
+    #   normalize data so it starts at 1
+    # df = normalize_data(df)
+
+    #   plot all data
+    # plot_data(df)
+
+    #   plot selected data
+    # plot_selected(df, ['SPY', 'IBM'], '2010-03-01', '2010-04-01')
+
+    #   compute global statistics for each stock
+    # print df.mean()
+    # print df.median()
+    # print df.std()
+
+    #===================================================================
+    #   calculate and plot rolling mean for SPY
+    #ax = df['SPY'].plot(title="SPY rolling mean", label='SPY')
+    #rm_SPY = pd.rolling_mean(df['SPY'], window=20)
+    #rm_SPY.plot(label='Rolling mean', ax=ax)
+    #ax.set_xlabel('Date')
+    #ax.set_ylabel('Price')
+    #ax.legend(loc='upper left')
+    #plt.show()
+    #==============================================================
+    #   calculate and plot rolling mean plus upper and lower bounds of 2x std deviation (bollinger bands)
+    """rm_SPY = get_rolling_mean(df['SPY'], window=20)
+    rstd_SPY = get_rolling_std(df['SPY'], window=20)
+    upper_band, lower_band = get_bollinger_bands(rm_SPY, rstd_SPY)
+    ax = df['SPY'].plot(title='Bollinger Bands', label='SPY')
+    rm_SPY.plot(label="Rolling mean",ax=ax)
+    upper_band.plot(label='upper band', ax=ax)
+    lower_band.plot(label='lower band', ax=ax)
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Price')
+    ax.legend(loc='upper left')
+    plt.show()"""
+
+
+
 
 
 if __name__ == '__main__':
