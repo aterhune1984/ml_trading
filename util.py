@@ -75,7 +75,7 @@ def get_bollinger_bands(rm, rstd):
 
 def normalize_data(df):
     """normalize stock prices uning the first row of the dataframe"""
-    return df/ df.ix[0,:]
+    return df / df.ix[0, :]
 
 def compute_daily_returns(df):
     """ compute and return the daily return values"""
