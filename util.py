@@ -89,10 +89,10 @@ def compute_daily_returns(df):
 
 def test_run():
     # define a date range
-    dates = pd.date_range('2010-01-01', '2010-12-31')
+    dates = pd.date_range('2010-01-01', '2010-01-31')
 
     # choose stock symbols to read
-    symbols = ['GOOG', 'IBM', 'GLD']  # SPY will be added in get_data()
+    symbols = ['GOOG']  # SPY will be added in get_data()
 
     df = get_data(symbols, dates)
     # fill any missing data ('NaN values') forward, then backward
@@ -147,8 +147,8 @@ def test_run():
     # plt.show()
     #==============================================================
     #   Daily returns
-    # daily_returns = compute_daily_returns(df)
-    # plot_data(daily_returns, title="Daily returns", ylabel="Daily returns")
+    daily_returns = compute_daily_returns(df)
+    plot_data(daily_returns, title="Daily returns", ylabel="Daily returns")
 
 
 
