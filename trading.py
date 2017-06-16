@@ -53,11 +53,11 @@ def get_data(symbols, dates):
             df = df.dropna(subset=['SPY'])
     return df
 
-def plot_data(df,title='Stock prices'):
+def plot_data(df, title='Stock prices', xlabel='Date', ylabel='Price'):
     '''plot stock prices'''
     ax = df.plot(title=title)
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Price')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
     plt.show()
 
 
@@ -76,6 +76,15 @@ def get_bollinger_bands(rm, rstd):
 def normalize_data(df):
     """normalize stock prices uning the first row of the dataframe"""
     return df/ df.ix[0,:]
+
+def compute_daily_returns(df):
+    """ compute and return the daily return values"""
+    daily_returns = df.copy() # copy given dataframe to match size and column names
+    # compute daily returns for row 1 onwards
+    daily_returns[1:] = (df[1:] / df[:-1].values) - 1
+    daily_returns.ix[0, :] = 0  # set daily returns for row 0 to 0
+    return daily_returns
+
 
 def test_run():
     # define a date range
@@ -111,28 +120,30 @@ def test_run():
 
     #===================================================================
     #   calculate and plot rolling mean for SPY
-    #ax = df['SPY'].plot(title="SPY rolling mean", label='SPY')
-    #rm_SPY = pd.rolling_mean(df['SPY'], window=20)
-    #rm_SPY.plot(label='Rolling mean', ax=ax)
-    #ax.set_xlabel('Date')
-    #ax.set_ylabel('Price')
-    #ax.legend(loc='upper left')
-    #plt.show()
+    # ax = df['SPY'].plot(title="SPY rolling mean", label='SPY')
+    # rm_SPY = pd.rolling_mean(df['SPY'], window=20)
+    # rm_SPY.plot(label='Rolling mean', ax=ax)
+    # ax.set_xlabel('Date')
+    # ax.set_ylabel('Price')
+    # ax.legend(loc='upper left')
+    # plt.show()
     #==============================================================
     #   calculate and plot rolling mean plus upper and lower bounds of 2x std deviation (bollinger bands)
-    """rm_SPY = get_rolling_mean(df['SPY'], window=20)
-    rstd_SPY = get_rolling_std(df['SPY'], window=20)
-    upper_band, lower_band = get_bollinger_bands(rm_SPY, rstd_SPY)
-    ax = df['SPY'].plot(title='Bollinger Bands', label='SPY')
-    rm_SPY.plot(label="Rolling mean",ax=ax)
-    upper_band.plot(label='upper band', ax=ax)
-    lower_band.plot(label='lower band', ax=ax)
-    ax.set_xlabel('Date')
-    ax.set_ylabel('Price')
-    ax.legend(loc='upper left')
-    plt.show()"""
+    # rm_SPY = get_rolling_mean(df['SPY'], window=20)
+    # rstd_SPY = get_rolling_std(df['SPY'], window=20)
+    # upper_band, lower_band = get_bollinger_bands(rm_SPY, rstd_SPY)
+    # ax = df['SPY'].plot(title='Bollinger Bands', label='SPY')
+    # rm_SPY.plot(label="Rolling mean",ax=ax)
+    # upper_band.plot(label='upper band', ax=ax)
+    # lower_band.plot(label='lower band', ax=ax)
+    # ax.set_xlabel('Date')
+    # ax.set_ylabel('Price')
+    # ax.legend(loc='upper left')
+    # plt.show()
+    #==============================================================
 
-
+    daily_returns = compute_daily_returns(df)
+    plot_data(daily_returns, title="Daily returns", ylabel="Daily returns")
 
 
 
